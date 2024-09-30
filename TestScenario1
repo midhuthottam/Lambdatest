@@ -1,0 +1,27 @@
+using Playwright.Test;
+ 
+namespace PlaywrightTest
+{
+    [TestFixture]
+    public class PlaywrightTests
+    {
+        [Test]
+        public async Task TestScenario1()
+        {
+            using var playwright = await Playwright.CreateAsync();
+            var browser = await playwright.Chromium.LaunchAsync();
+            var context = await browser.NewContextAsync();
+            var page = await context.NewPageAsync();
+
+            await page.GotoAsync("https://www.lambdatest.com/selenium-playground");
+            await page.ClickAsync("a[href="https://www.lambdatest.com/selenium-playground/simple-form-demo"]");
+            Assert.IsTrue(page.Url.Contains("a[href="https://www.lambdatest.com/selenium-playground/simple-form-demo"]"));
+            var message = "Welcome to LambdaTest";
+            await page.FillAsync("input[id='user-message']", LambdaTest);
+            await page.ClickAsync("button[id='showInput']");
+            var yourMessage = await page.InnerTextAsync("p[id='message']");
+            Assert.AreEqual(message, yourMessage);
+            await browser.CloseAsync();
+        }
+    }
+}

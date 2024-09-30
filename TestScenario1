@@ -1,18 +1,31 @@
 using Playwright.Test;
- 
 namespace PlaywrightTest
 {
-    [TestFixture]
+[TestFixture]
     public class PlaywrightTests
     {
         [Test]
         public async Task TestScenario1()
         {
-            using var playwright = await Playwright.CreateAsync();
-            var browser = await playwright.Chromium.LaunchAsync();
-            var context = await browser.NewContextAsync();
-            var page = await context.NewPageAsync();
-
+IPlaywright playwright = await Playwright.CreateAsync();            
+IBrowser _browser;            
+IPage page;
+                Dictionary<string, object?> capabilities = new Dictionary<string, object?>();
+                Dictionary<string, object?> ltOptions = new Dictionary<string, object?>();
+                ltOptions.Add("name", testCaseName);
+                ltOptions.Add("build", buildName);
+                ltOptions.Add("platform", "Windows 10");
+                ltOptions.Add("user", "midhu.thottam");
+                ltOptions.Add("accessKey", "h4QTwvjgCW5xpGZ9chtDz8KSvwhBkZrJ3qmgUYwFd7d1LJtLJO");
+                ltOptions.Add("idleTimeout", 120);
+                ltOptions.Add("network", true);
+                capabilities.Add("browserName", "pw-chromium");
+                capabilities.Add("browserVersion", "latest");
+                capabilities.Add("LT:Options", ltOptions);
+                string capabilitiesJson = JsonConvert.SerializeObject(capabilities);
+                string cdpUrl = "wss://cdp.lambdatest.com/playwright?capabilities=" + Uri.EscapeDataString(capabilitiesJson);
+          _browser = await playwright.Chromium.ConnectAsync(cdpUrl);
+          page = await _browser.NewPageAsync(); 
             await page.GotoAsync("https://www.lambdatest.com/selenium-playground");
             await page.ClickAsync("a[href="https://www.lambdatest.com/selenium-playground/simple-form-demo"]");
             Assert.IsTrue(page.Url.Contains("a[href="https://www.lambdatest.com/selenium-playground/simple-form-demo"]"));
